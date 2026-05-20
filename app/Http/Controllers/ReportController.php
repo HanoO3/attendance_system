@@ -17,7 +17,7 @@ class ReportController extends Controller
         $user = Auth::user();
         
         $departments = Department::all();
-        $semesters = range(1, 8);
+        $semesters = ['1st','2nd','3rd','4th','5th','6th','7th','8th'];
 
         $students = null;
         $filter = false;

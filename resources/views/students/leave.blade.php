@@ -1,213 +1,195 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-0">Leave Requests</h2>
-            <p class="text-light opacity-75 mb-0">Submit and track your leave applications</p>
-        </div>
-    </div>
 
-    <div class="row">
-        <!-- Form Card -->
-        <div class="col-lg-5 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="fas fa-calendar-plus me-2"></i> Submit Leave Request</h5>
-                </div>
-                <div class="card-body">
-                    <form action="{{ route('student.submitLeave') }}" method="POST">
-                        @csrf
-                        
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
-                        @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
-
-                        <div class="mb-3">
-                            <label class="form-label text-white">Leave Date</label>
-                            <input type="date" name="leave_date" class="form-control bg-transparent text-white border-light" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label text-white">Reason</label>
-                            <textarea name="reason" class="form-control bg-transparent text-white border-light placeholder-white" rows="4" 
-                                      placeholder="Write your reason here..." required></textarea>
-                            <small class="text-light opacity-50">Explain your reason in detail.</small>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mt-2">
-                            <i class="fas fa-paper-plane me-2"></i> Submit Request
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- History Card (Updated with View Button) -->
-        <div class="col-lg-7 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="fas fa-history me-2"></i> My Leave History</h5>
-                </div>
-                <div class="card-body p-0">
-                    @if($leaves->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="bg-transparent">
-                                <tr>
-                                    <th class="border-0 text-light opacity-75 ps-3">Date</th>
-                                    <th class="border-0 text-light opacity-75">Reason</th>
-                                    <th class="border-0 text-light opacity-75 text-center">Status</th>
-                                    <th class="border-0 text-light opacity-75 text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($leaves as $leave)
-                                <tr>
-                                    <td class="ps-3 text-white">
-                                        {{ \Carbon\Carbon::parse($leave->leave_date)->format('d M Y') }}
-                                    </td>
-                                    <td class="text-white">
-                                        <span class="d-inline-block text-truncate" style="max-width: 150px;">
-                                            {{ $leave->reason }}
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        @if($leave->status == 'pending')
-                                            <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Pending</span>
-                                        @elseif($leave->status == 'approved')
-                                            <span class="badge bg-success"><i class="fas fa-check me-1"></i> Approved</span>
-                                        @else
-                                            <span class="badge bg-danger"><i class="fas fa-times me-1"></i> Rejected</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <!-- View Button -->
-                                        <button type="button" class="btn btn-sm btn-outline-info" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#viewStudentLeaveModal"
-                                                data-date="{{ \Carbon\Carbon::parse($leave->leave_date)->format('d F Y') }}"
-                                                data-reason="{{ $leave->reason }}"
-                                                data-status="{{ $leave->status }}"
-                                                data-created="{{ \Carbon\Carbon::parse($leave->created_at)->format('d M Y, h:i A') }}"
-                                                title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    @else
-                    <div class="text-center py-5">
-                        <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
-                        <h5>No History</h5>
-                        <p class="text-light opacity-50">You haven't submitted any leave requests yet.</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
+<div style="margin-bottom:22px;">
+    <h1 style="font-size:1.35rem;font-weight:800;color:#111827;margin-bottom:3px;">Leave Requests</h1>
+    <p style="font-size:.82rem;color:#6b7280;margin:0;">Submit and track your leave applications</p>
 </div>
 
-<!-- Student Leave View Modal -->
-<div class="modal fade" id="viewStudentLeaveModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-light shadow" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-            <div class="modal-header border-light">
-                <h5 class="modal-title text-white">Application Details</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div class="row g-4">
+
+    <!-- Submit Form -->
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-calendar-plus"></i></div>
+                Submit Leave Request
             </div>
-            <div class="modal-body p-0">
+            <div class="card-body p-4">
+
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                <form action="{{ route('student.submitLeave') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label class="form-label">Leave Date</label>
+                        <input type="date" name="leave_date"
+                               class="form-control"
+                               style="background:#fff;border:1.5px solid #d1d5db;color:#111827;padding:10px 13px;"
+                               min="{{ date('Y-m-d') }}"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea name="reason" rows="5"
+                                  class="form-control"
+                                  style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                  placeholder="Write your reason here..." required></textarea>
+                        <div class="form-text">Explain your reason in detail.</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane me-2"></i> Submit Request
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave History -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-history"></i></div>
+                My Leave History
+            </div>
+            <div class="card-body p-0">
+                @if($leaves->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="bg-transparent">
+                    <table class="table mb-0">
+                        <thead>
                             <tr>
-                                <th class="border-0 text-light opacity-75 ps-3" style="width: 40%;">Field</th>
-                                <th class="border-0 text-light opacity-75">Details</th>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Reason</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">View</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($leaves as $leave)
                             <tr>
-                                <td class="ps-3 text-light opacity-75">Leave Date</td>
-                                <td class="text-white fw-bold" id="modalDate">N/A</td>
+                                <td style="color:#9ca3af;">{{ $loop->iteration }}</td>
+                                <td style="color:#374151;font-weight:600;white-space:nowrap;">
+                                    {{ \Carbon\Carbon::parse($leave->leave_date)->format('d M Y') }}
+                                </td>
+                                <td style="color:#6b7280;max-width:160px;">
+                                    <span class="d-inline-block text-truncate" style="max-width:150px;">
+                                        {{ $leave->reason }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    @if($leave->status == 'pending')
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    @elseif($leave->status == 'approved')
+                                        <span class="badge bg-success">Approved</span>
+                                    @else
+                                        <span class="badge bg-danger">Rejected</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-info"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#viewLeaveModal"
+                                            data-date="{{ \Carbon\Carbon::parse($leave->leave_date)->format('d F Y') }}"
+                                            data-reason="{{ $leave->reason }}"
+                                            data-status="{{ $leave->status }}"
+                                            data-created="{{ \Carbon\Carbon::parse($leave->created_at)->format('d M Y, h:i A') }}"
+                                            title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
                             </tr>
-                            <tr>
-                                <td class="ps-3 text-light opacity-75">Submitted On</td>
-                                <td class="text-white" id="modalCreated">N/A</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 text-light opacity-75">Status</td>
-                                <td id="modalStatus">N/A</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3 text-light opacity-75 align-top">Reason</td>
-                                <td class="text-white" id="modalReason">Reason text...</td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
+                @else
+                <div class="text-center py-5" style="color:#9ca3af;">
+                    <i class="fas fa-inbox fa-3x mb-3 d-block opacity-50"></i>
+                    <h5>No History</h5>
+                    <p>You haven't submitted any leave requests yet.</p>
+                </div>
+                @endif
             </div>
-            <div class="modal-footer border-light">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- View Leave Modal -->
+<div class="modal fade" id="viewLeaveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight:700;font-size:.95rem;">
+                    <i class="fas fa-calendar-check me-2 text-info"></i> Leave Application Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <table class="table mb-0">
+                    <tbody>
+                        <tr>
+                            <td style="color:#9ca3af;font-weight:600;width:38%;">Leave Date</td>
+                            <td style="font-weight:700;color:#111827;" id="lv-date"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#9ca3af;font-weight:600;">Submitted On</td>
+                            <td style="color:#374151;" id="lv-created"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#9ca3af;font-weight:600;">Status</td>
+                            <td id="lv-status"></td>
+                        </tr>
+                        <tr>
+                            <td style="color:#9ca3af;font-weight:600;vertical-align:top;">Reason</td>
+                            <td style="color:#374151;" id="lv-reason"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .placeholder-white::placeholder { color: #ffffff !important; opacity: 0.7; }
-    .form-control:focus {
-        background-color: rgba(255, 255, 255, 0.05);
-        border-color: #6244a2;
-        color: #ffffff;
-        box-shadow: 0 0 0 0.2rem rgba(98, 68, 162, 0.25);
-    }
-</style>
+@endsection
 
+@section('scripts')
 <script>
-    // Modal Handler
-    var viewStudentLeaveModal = document.getElementById('viewStudentLeaveModal')
-    viewStudentLeaveModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget
-        
-        // Get Data
-        var date = button.getAttribute('data-date')
-        var reason = button.getAttribute('data-reason')
-        var status = button.getAttribute('data-status')
-        var created = button.getAttribute('data-created')
+document.getElementById('viewLeaveModal').addEventListener('show.bs.modal', function(e) {
+    var b = e.relatedTarget;
+    document.getElementById('lv-date').textContent    = b.getAttribute('data-date');
+    document.getElementById('lv-reason').textContent  = b.getAttribute('data-reason');
+    document.getElementById('lv-created').textContent = b.getAttribute('data-created');
 
-        // Set Data
-        document.getElementById('modalDate').textContent = date
-        document.getElementById('modalReason').textContent = reason
-        document.getElementById('modalCreated').textContent = created
-        
-        // Set Status Badge
-        var statusTd = document.getElementById('modalStatus');
-        statusTd.innerHTML = ''; // Clear previous
-
-        if(status === 'pending') {
-            statusTd.innerHTML = '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Pending</span>';
-        } else if(status === 'approved') {
-            statusTd.innerHTML = '<span class="badge bg-success"><i class="fas fa-check me-1"></i> Approved</span>';
-        } else {
-            statusTd.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times me-1"></i> Rejected</span>';
-        }
-    })
+    var status = b.getAttribute('data-status');
+    var statusEl = document.getElementById('lv-status');
+    if (status === 'pending') {
+        statusEl.innerHTML = '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Pending</span>';
+    } else if (status === 'approved') {
+        statusEl.innerHTML = '<span class="badge bg-success"><i class="fas fa-check me-1"></i> Approved</span>';
+    } else {
+        statusEl.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times me-1"></i> Rejected</span>';
+    }
+});
 </script>
 @endsection

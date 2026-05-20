@@ -1,144 +1,148 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Subjects Management</h2>
-        <a href="{{ route('subjects.create') }}" class="btn btn-primary"><i class="fas fa-plus me-2"></i> Add Subject</a>
+
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
+    <div>
+        <h1 style="font-size:1.35rem;font-weight:800;color:#111827;margin-bottom:3px;">Subjects Management</h1>
+        <p style="font-size:.82rem;color:#6b7280;margin:0;">Manage all subjects and assign teachers</p>
     </div>
-
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <div class="card border-light shadow">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-transparent">
-                        <tr>
-                            <th class="border-0 text-light opacity-75 ps-4">Name</th>
-                            <th class="border-0 text-light opacity-75">Code</th>
-                            <th class="border-0 text-light opacity-75">Department</th>
-                            <th class="border-0 text-light opacity-75">Semester</th>
-                            <th class="border-0 text-light opacity-75">Session</th>
-                            <th class="border-0 text-light opacity-75">Assigned Teachers</th>
-                            <th class="border-0 text-light opacity-75 text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($subjects as $subject)
-                        <tr>
-                            <td class="ps-4 text-white">{{ $subject->name }}</td>
-                            <td><span class="badge bg-info">{{ $subject->code }}</span></td>
-                            <td class="text-white">{{ $subject->department->name ?? 'N/A' }}</td>
-                            <td class="text-white">{{ $subject->semester }}</td>
-                            
-                            <td class="text-white">
-                                @if($subject->teachers->count() > 0)
-                                    {{ $subject->teachers->pluck('pivot.session')->unique()->join(', ') }}
-                                @else
-                                    <span class="text-light opacity-50">N/A</span>
-                                @endif
-                            </td>
-
-                            <td>
-                                @if($subject->teachers->count() > 0)
-                                    <span class="badge bg-secondary me-1">
-                                        {{ $subject->teachers->pluck('name')->join(', ') }}
-                                    </span>
-                                @else
-                                    <span class="text-light opacity-50">None</span>
-                                @endif
-                            </td>
-                            
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center gap-1">
-                                    
-                                    <!-- ASSIGN BUTTON -->
-                                    <button type="button" class="btn btn-sm btn-outline-success" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#assignModal"
-                                            data-subject-id="{{ $subject->id }}"
-                                            data-subject-name="{{ $subject->name }}"
-                                            title="Assign Teacher">
-                                        <i class="fas fa-user-plus"></i>
-                                    </button>
-
-                                    <!-- EDIT BUTTON -->
-                                    <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-sm btn-outline-warning" title="Edit">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-
-                                    <!-- DELETE BUTTON -->
-                                    <form action="{{ route('subjects.destroy', $subject->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
+    <a href="{{ route('subjects.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i> Add Subject
+    </a>
 </div>
 
-<!-- ASSIGN MODAL - GLASS THEME -->
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+
+<div class="card">
+    <div class="card-header">
+        <div class="hico"><i class="fas fa-book-open"></i></div>
+        All Subjects
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Department</th>
+                        <th>Semester</th>
+                        <th>Session</th>
+                        <th>Assigned Teacher</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($subjects as $subject)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td style="font-weight:600;">{{ $subject->name }}</td>
+                        <td><span class="badge bg-info bg-opacity-10 text-info fw-bold">{{ $subject->code }}</span></td>
+                        <td>{{ $subject->department->name ?? 'N/A' }}</td>
+                        <td>{{ $subject->semester }}</td>
+                        <td style="color:#6b7280;">
+                            @if($subject->teachers->count() > 0)
+                                {{ $subject->teachers->pluck('pivot.session')->unique()->join(', ') }}
+                            @else
+                                <span style="color:#9ca3af;">N/A</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($subject->teachers->count() > 0)
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary fw-semibold">
+                                    {{ $subject->teachers->pluck('name')->join(', ') }}
+                                </span>
+                            @else
+                                <span style="color:#9ca3af;">None</span>
+                            @endif
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-1">
+                                <button type="button" class="btn btn-sm btn-outline-success"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#assignModal"
+                                        data-subject-id="{{ $subject->id }}"
+                                        data-subject-name="{{ $subject->name }}"
+                                        title="Assign Teacher">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                                <a href="{{ route('subjects.edit', $subject->id) }}" class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <form action="{{ route('subjects.destroy', $subject->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this subject?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="8" class="text-center py-5" style="color:#9ca3af;">
+                            <i class="fas fa-book fa-3x mb-3 d-block opacity-50"></i>
+                            No subjects found.
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ASSIGN TEACHER MODAL -->
 <div class="modal fade" id="assignModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content modal-glass">
-            <div class="modal-header border-0">
-                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Assign Teacher</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight:700;font-size:.95rem;">
+                    <i class="fas fa-user-plus me-2 text-success"></i> Assign Teacher
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{{ route('subjects.assign') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <input type="hidden" name="subject_id" id="modal_subject_id">
-                    
-                    <!-- Subject Input -->
+
                     <div class="mb-3">
                         <label class="form-label">Subject</label>
-                        <input type="text" id="modal_subject_name" class="form-control form-control-glass" readonly>
+                        <input type="text" id="modal_subject_name" class="form-control" readonly style="background:#f8fafc;">
                     </div>
 
-                    <!-- Teacher Select -->
                     <div class="mb-3">
                         <label class="form-label">Select Teacher</label>
-                        <select name="teacher_id" class="form-select form-select-glass" required>
-                            <option value="">Select Teacher</option>
+                        <select name="teacher_id" class="form-select" required>
+                            <option value="">-- Select Teacher --</option>
                             @foreach($teachers as $t)
                                 <option value="{{ $t->id }}">{{ $t->name }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Session Input -->
                     <div class="mb-3">
                         <label class="form-label">Session</label>
-                        <input type="text" name="session" class="form-control form-control-glass" placeholder="e.g. 2022-2026" required>
+                        <input type="text" name="session" class="form-control" placeholder="e.g. 2022-2026" required>
                     </div>
                 </div>
-                
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success btn-sm">
                         <i class="fas fa-check me-1"></i> Assign
                     </button>
                 </div>
@@ -147,52 +151,14 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
 <script>
-    var assignModal = document.getElementById('assignModal')
-    assignModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget
-        document.getElementById('modal_subject_id').value = button.getAttribute('data-subject-id')
-        document.getElementById('modal_subject_name').value = button.getAttribute('data-subject-name')
-    })
+document.getElementById('assignModal').addEventListener('show.bs.modal', function(event) {
+    var btn = event.relatedTarget;
+    document.getElementById('modal_subject_id').value   = btn.getAttribute('data-subject-id');
+    document.getElementById('modal_subject_name').value = btn.getAttribute('data-subject-name');
+});
 </script>
-
-<style>
-    /* GLASS THEME FOR MODAL */
-    .modal-glass {
-        background: rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        border-radius: 15px;
-        color: #fff;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-    }
-
-    .modal-header, .modal-footer {
-        background: transparent !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
-    }
-
-    /* GLASS THEME FOR INPUTS INSIDE MODAL */
-    .form-control-glass, .form-select-glass {
-        background: rgba(255, 255, 255, 0.05) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        color: #ffffff !important;
-        border-radius: 8px;
-    }
-
-    .form-control-glass::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
-    }
-
-    .form-select-glass {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    }
-
-    .form-select-glass option {
-        background-color: #343a40 !important; /* Darker option for contrast */
-        color: #ffffff !important;
-        padding: 10px;
-    }
-</style>
 @endsection

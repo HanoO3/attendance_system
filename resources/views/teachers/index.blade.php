@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div>
     
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">Teacher Management</h2>
-            <p class="text-light opacity-75 mb-0">Filter and manage records</p>
+            <p class="text-muted mb-0">Filter and manage records</p>
         </div>
         <a href="{{ route('teachers.create') }}" class="btn btn-primary">
             <i class="fas fa-user-plus me-2"></i> Add New Teacher
@@ -15,14 +15,14 @@
     </div>
 
     <!-- Filter Card -->
-    <div class="card border-light shadow mb-4">
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('teachers.index') }}" class="row g-3">
                 
                 <!-- Department Filter -->
                 <div class="col-md-4 mb-3 mb-md-0">
-                    <label class="form-label text-light opacity-75">Department</label>
-                    <select id="filterDept" name="department_id" class="form-select bg-transparent text-white border-light custom-select-dark">
+                    <label class="form-label text-muted">Department</label>
+                    <select id="filterDept" name="department_id" class="form-select custom-select-dark">
                         <option value="all">All Departments</option>
                         @foreach($departments as $dept)
                             <option value="{{ $dept->id }}" {{ request('department_id') == $dept->id ? 'selected' : '' }}>
@@ -34,8 +34,8 @@
 
                 <!-- Semester Filter -->
                 <div class="col-md-4 mb-3 mb-md-0">
-                    <label class="form-label text-light opacity-75">Semester</label>
-                    <select id="filterSem" name="semester" class="form-select bg-transparent text-white border-light custom-select-dark">
+                    <label class="form-label text-muted">Semester</label>
+                    <select id="filterSem" name="semester" class="form-select custom-select-dark">
                         <option value="all">All Semesters</option>
                         @foreach(['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'] as $sem)
                             <option value="{{ $sem }}" {{ request('semester') == $sem ? 'selected' : '' }}>
@@ -47,9 +47,9 @@
 
                 <!-- Session Filter -->
                 <div class="col-md-4">
-                    <label class="form-label text-light opacity-75">Session</label>
+                    <label class="form-label text-muted">Session</label>
                     <input type="text" name="session" id="filterSession" value="{{ request('session') }}" 
-                           class="form-control bg-transparent text-white border-light placeholder-white" 
+                           class="form-control  " 
                            placeholder="e.g. 2020-2024">
                 </div>
 
@@ -58,7 +58,7 @@
     </div>
 
     <!-- Teachers Table Card -->
-    <div class="card border-light shadow">
+    <div class="card shadow-sm">
         <div class="card-body p-0">
             @if(session('success'))
                 <div class="alert alert-success m-3 mb-0">{{ session('success') }}</div>
@@ -68,14 +68,14 @@
                 <table class="table table-hover mb-0 align-middle" id="teacherTable">
                     <thead class="bg-transparent">
                         <tr>
-                            <th class="border-0 text-light opacity-75 ps-4">Sr#</th>
-                            <th class="border-0 text-light opacity-75">Name</th>
-                            <th class="border-0 text-light opacity-75">Email</th>
-                            <th class="border-0 text-light opacity-75">Department</th>
-                            <th class="border-0 text-light opacity-75">Semester</th>
-                            <th class="border-0 text-light opacity-75">Session</th>
-                            <th class="border-0 text-light opacity-75">Contact</th>
-                            <th class="border-0 text-light opacity-75 text-center">Actions</th>
+                            <th class="border-0 text-muted ps-4">Sr#</th>
+                            <th class="border-0 text-muted">Name</th>
+                            <th class="border-0 text-muted">Email</th>
+                            <th class="border-0 text-muted">Department</th>
+                            <th class="border-0 text-muted">Semester</th>
+                            <th class="border-0 text-muted">Session</th>
+                            <th class="border-0 text-muted">Contact</th>
+                            <th class="border-0 text-muted text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -132,7 +132,7 @@
             <div id="noResults" class="text-center py-5 d-none">
                 <i class="fas fa-search fa-3x mb-3 opacity-50"></i>
                 <h5>No Matching Records</h5>
-                <p class="text-light opacity-50">Try adjusting your filters.</p>
+                <p class="text-muted">Try adjusting your filters.</p>
             </div>
 
         </div>
@@ -165,7 +165,7 @@
     }
 
     /* Session input placeholder white */
-    .placeholder-white::placeholder { color: #ffffff !important; opacity: 0.75; }
+    .::placeholder { color: #ffffff !important; opacity: 0.75; }
 </style>
 
 <script>

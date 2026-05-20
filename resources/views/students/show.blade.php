@@ -1,131 +1,112 @@
 @extends('layouts.app')
-
 @section('content')
-<div class="container-fluid">
-    
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-0">Student Profile</h2>
-            <p class="text-light opacity-75 mb-0">Detailed information and statistics</p>
-        </div>
-        <div>
-            <a href="{{ route('students.index') }}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left me-1"></i> Back to List
-            </a>
-        </div>
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
+    <div>
+        <h1 style="font-size:1.35rem;font-weight:800;color:#111827;margin-bottom:3px;">Student Profile</h1>
+        <p style="font-size:.82rem;color:#6b7280;margin:0;">Detailed information and statistics</p>
     </div>
+    <a href="{{ route('students.index') }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i> Back to List
+    </a>
+</div>
 
-    <div class="row">
-        <!-- Left: Profile Card -->
-        <div class="col-lg-5 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-body text-center">
-                    <div class="avatar-circle mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
-                        {{ strtoupper(substr($student->student_name ?? 'N', 0, 1)) }}
+<div class="row g-4">
+    <!-- Left: Profile Info -->
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <!-- Avatar -->
+                <div class="text-center mb-4">
+                    <div style="width:70px;height:70px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800;margin:0 auto 12px;">
+                        {{ strtoupper(substr($student->student_name ?? 'S', 0, 1)) }}
                     </div>
-                    <h3 class="text-white mb-1">{{ $student->student_name }}</h3>
-                    <p class="text-light opacity-75 mb-3">{{ $student->department->name ?? 'N/A' }}</p>
-                    
-                    <hr class="border-light">
-                    
-                    <div class="text-start">
-                        <table class="table table-borderless mb-0">
-                            <tr>
-                                <td class="text-light opacity-50">Roll Number</td>
-                                <td class="text-white text-end fw-bold">{{ $student->roll_number }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-light opacity-50">Father Name</td>
-                                <td class="text-white text-end">{{ $student->father_name }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-light opacity-50">Course</td>
-                                <td class="text-white text-end">{{ $student->course }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-light opacity-50">Semester</td>
-                                <td class="text-white text-end">{{ $student->semester }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-light opacity-50">Session</td>
-                                <td class="text-white text-end">{{ $student->session }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-light opacity-50">Contact</td>
-                                <td class="text-white text-end">{{ $student->contact_number }}</td>
-                            </tr>
-                        </table>
-                    </div>
+                    <h4 style="font-weight:800;color:#111827;margin-bottom:3px;">{{ $student->student_name }}</h4>
+                    <span style="font-size:.82rem;color:#6b7280;">{{ $student->department->name ?? 'N/A' }}</span>
+                </div>
+                <hr style="border-color:#e5e7eb;">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;width:45%;">Roll Number</td>
+                        <td style="color:#111827;font-weight:700;">{{ $student->roll_number }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;">Father Name</td>
+                        <td style="color:#374151;">{{ $student->father_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;">Course Code</td>
+                        <td><span class="badge bg-info bg-opacity-10 text-info fw-bold">{{ $student->course }}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;">Semester</td>
+                        <td style="color:#374151;">{{ $student->semester }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;">Session</td>
+                        <td style="color:#374151;">{{ $student->session }}</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#9ca3af;font-weight:600;">Contact</td>
+                        <td style="color:#374151;">{{ $student->contact_number }}</td>
+                    </tr>
+                </table>
+                <hr style="border-color:#e5e7eb;">
+                <div class="text-center">
+                    <a href="{{ route('students.edit', $student->id) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i> Edit Profile
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Right: Attendance Stats -->
-        <div class="col-lg-7 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">Attendance Overview</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <!-- Present -->
-                        <div class="col-6 mb-4">
-                            <div class="p-3 rounded" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2);">
-                                <h2 class="text-success mb-0">{{ $presentCount }}</h2>
-                                <small class="text-light opacity-75">Present</small>
-                            </div>
-                        </div>
-                        
-                        <!-- Absent -->
-                        <div class="col-6 mb-4">
-                            <div class="p-3 rounded" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2);">
-                                <h2 class="text-danger mb-0">{{ $absentCount }}</h2>
-                                <small class="text-light opacity-75">Absent</small>
-                            </div>
-                        </div>
-                        
-                        <!-- Late -->
-                        <div class="col-6 mb-4">
-                            <div class="p-3 rounded" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.2);">
-                                <h2 class="text-warning mb-0">{{ $lateCount }}</h2>
-                                <small class="text-light opacity-75">Late</small>
-                            </div>
-                        </div>
-                        
-                        <!-- Leave -->
-                        <div class="col-6 mb-4">
-                            <div class="p-3 rounded" style="background: rgba(253, 126, 20, 0.1); border: 1px solid rgba(253, 126, 20, 0.2);">
-                                <h2 style="color: #fd7e14;" class="mb-0">{{ $leaveCount }}</h2>
-                                <small class="text-light opacity-75">Leave</small>
-                            </div>
+    <!-- Right: Attendance Stats -->
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-chart-pie"></i></div>
+                Attendance Overview
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3 text-center mb-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#f0fdf4;border:1.5px solid #bbf7d0;">
+                            <div style="font-size:2rem;font-weight:900;color:#10b981;">{{ $presentCount }}</div>
+                            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6b7280;margin-top:2px;">Present</div>
                         </div>
                     </div>
-
-                    <hr class="border-light">
-
-                    <div class="text-center">
-                        <small class="text-light opacity-50 d-block mb-2">Quick Actions</small>
-                        <a href="{{ route('students.edit', $student->id) }}" class="btn btn-outline-info btn-sm">
-                            <i class="fas fa-edit me-1"></i> Edit Profile
-                        </a>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#fef2f2;border:1.5px solid #fecaca;">
+                            <div style="font-size:2rem;font-weight:900;color:#ef4444;">{{ $absentCount }}</div>
+                            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6b7280;margin-top:2px;">Absent</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#fffbeb;border:1.5px solid #fde68a;">
+                            <div style="font-size:2rem;font-weight:900;color:#f59e0b;">{{ $lateCount }}</div>
+                            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6b7280;margin-top:2px;">Late</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded" style="background:#fff7ed;border:1.5px solid #fed7aa;">
+                            <div style="font-size:2rem;font-weight:900;color:#fd7e14;">{{ $leaveCount }}</div>
+                            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6b7280;margin-top:2px;">Leave</div>
+                        </div>
+                    </div>
+                </div>
+                @php
+                    $total = $presentCount + $absentCount + $lateCount + $leaveCount;
+                    $pct = $total > 0 ? round(($presentCount / $total) * 100) : 0;
+                @endphp
+                <div style="background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:10px;padding:16px;text-align:center;">
+                    <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:#9ca3af;margin-bottom:6px;">Attendance Rate</div>
+                    <div style="font-size:2rem;font-weight:900;color:{{ $pct >= 75 ? '#10b981' : '#ef4444' }};">{{ $pct }}%</div>
+                    <div class="progress mt-2" style="height:8px;border-radius:10px;">
+                        <div class="progress-bar {{ $pct >= 75 ? 'bg-success' : 'bg-danger' }}" style="width:{{ $pct }}%;border-radius:10px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .avatar-circle {
-        background: linear-gradient(135deg, rgba(118, 75, 162, 0.6), rgba(255, 255, 255, 0.2));
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: #fff;
-    }
-</style>
 @endsection

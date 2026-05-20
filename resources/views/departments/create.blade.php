@@ -1,19 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div>
     
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-0">Add New Department</h2>
-            <p class="text-light opacity-75 mb-0">Create a new department for the system</p>
+            <p class="text-muted mb-0">Create a new department for the system</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6">
-            <div class="card border-light shadow">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     
                     @if ($errors->any())
@@ -30,9 +30,9 @@
                         @csrf
 
                         <div class="mb-3">
-                            <label class="form-label text-white">Department Name</label>
+                            <label class="form-label text-dark">Department Name</label>
                             <input type="text" name="name" 
-                                   class="form-control bg-transparent text-white border-light placeholder-white" 
+                                   class="form-control  " 
                                    placeholder="e.g. BS Computer Science" 
                                    value="{{ old('name') }}" 
                                    required>
@@ -58,12 +58,12 @@
 
 <style>
     /* Placeholder White Color Fix */
-    .placeholder-white::placeholder {
+    .::placeholder {
         color: #ffffff !important;
         opacity: 1;
     }
-    .placeholder-white::-webkit-input-placeholder { color: #ffffff; }
-    .placeholder-white::-moz-placeholder { color: #ffffff; }
-    .placeholder-white:-ms-input-placeholder { color: #ffffff; }
+    .::-webkit-input-placeholder { color: #ffffff; }
+    .::-moz-placeholder { color: #ffffff; }
+    .:-ms-input-placeholder { color: #ffffff; }
 </style>
 @endsection

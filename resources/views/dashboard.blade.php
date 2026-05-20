@@ -1,243 +1,155 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-0">Dashboard Overview</h2>
-            <p class="text-light opacity-75 mb-0">Monitor your system statistics</p>
-        </div>
+<div class="pg-hdr">
+    <h2>Dashboard Overview</h2>
+    <p>Monitor your institution's attendance statistics at a glance</p>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-sm-6">
+        <a href="{{ route('students.index') }}" class="stat-card">
+            <div class="st-ico blue"><i class="fas fa-user-graduate"></i></div>
+            <div>
+                <div class="st-lbl">Total Students</div>
+                <div class="st-val">{{ $studentsCount ?? 0 }}</div>
+            </div>
+        </a>
     </div>
-
-    <!-- Stats Cards Row -->
-    <div class="row">
-        
-        <!-- Total Students Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ route('students.index') }}" class="text-decoration-none">
-                <div class="card border-light shadow h-100 py-2 hover-card">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
-                                    Total Students
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-white">{{ $studentsCount ?? 0 }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Departments Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ route('departments.index') }}" class="text-decoration-none">
-                <div class="card border-light shadow h-100 py-2 hover-card">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
-                                    Departments
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-white">{{ $departmentsCount ?? 0 }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-building fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Teachers Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <a href="{{ route('teachers.index') }}" class="text-decoration-none">
-                <div class="card border-light shadow h-100 py-2 hover-card">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
-                                    Total Teachers
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-white">{{ $teachersCount ?? 0 }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Active Students Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <a href="#" data-bs-toggle="modal" data-bs-target="#activeStudentsModal" class="text-decoration-none">
-                <div class="card border-light shadow h-100 py-2 hover-card">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-light text-uppercase mb-1">
-                                    Active Students
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-white">{{ $activeStudents ?? 0 }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
+    <div class="col-xl-3 col-sm-6">
+        <a href="{{ route('departments.index') }}" class="stat-card">
+            <div class="st-ico violet"><i class="fas fa-building"></i></div>
+            <div>
+                <div class="st-lbl">Departments</div>
+                <div class="st-val">{{ $departmentsCount ?? 0 }}</div>
+            </div>
+        </a>
     </div>
+    <div class="col-xl-3 col-sm-6">
+        <a href="{{ route('teachers.index') }}" class="stat-card">
+            <div class="st-ico amber"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+                <div class="st-lbl">Total Teachers</div>
+                <div class="st-val">{{ $teachersCount ?? 0 }}</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-xl-3 col-sm-6">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#activeStudentsModal" class="stat-card">
+            <div class="st-ico green"><i class="fas fa-user-check"></i></div>
+            <div>
+                <div class="st-lbl">Active Students</div>
+                <div class="st-val">{{ $activeStudents ?? 0 }}</div>
+            </div>
+        </a>
+    </div>
+</div>
 
-    <!-- Content Row -->
-    <div class="row">
-        <!-- Attendance Chart Area -->
-        <div class="col-xl-8 col-lg-7 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-white">Attendance Overview</h6>
-                </div>
-                <div class="card-body">
-                    <div id="attendanceChart" style="min-height: 300px;"></div>
-                </div>
+<!-- Charts Row -->
+<div class="row g-3">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-chart-donut"></i></div>
+                Attendance Overview
+            </div>
+            <div class="card-body" style="padding:20px;">
+                <div id="attendanceChart" style="min-height:300px;"></div>
             </div>
         </div>
-
-        <!-- Quick Actions -->
-        <div class="col-xl-4 col-lg-5 mb-4">
-            <div class="card border-light shadow h-100">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-white">Quick Actions</h6>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush" id="quickActionsList">
-                        
-                        <!-- Add Student -->
-                        <a href="{{ route('students.create') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="icon-circle bg-primary">
-                                    <i class="fas fa-user-plus text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <span class="font-weight-bold text-white">Add New Student</span>
-                            </div>
-                        </a>
-
-                        <!-- View Requests -->
-                        <a href="{{ route('admin.requests') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="icon-circle bg-warning">
-                                    <i class="fas fa-inbox text-white"></i>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between w-100 me-2">
-                                <span class="font-weight-bold text-white">View Requests</span>
-                                @if(isset($pendingProfileCount) && $pendingProfileCount > 0)
-                                    <span class="badge bg-danger">{{ $pendingProfileCount }}</span>
-                                @endif
-                            </div>
-                        </a>
-
-                        <!-- Leave Approvals -->
-                        <a href="{{ route('admin.leaves') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="icon-circle bg-info">
-                                    <i class="fas fa-calendar-check text-white"></i>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between w-100 me-2">
-                                <span class="font-weight-bold text-white">Leave Approvals</span>
-                                @if(isset($pendingLeavesCount) && $pendingLeavesCount > 0)
-                                    <span class="badge bg-danger">{{ $pendingLeavesCount }}</span>
-                                @endif
-                            </div>
-                        </a>
-
-                        <!-- Mark Attendance -->
-                        <a href="{{ route('attendance.index') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="icon-circle bg-success">
-                                    <i class="fas fa-clipboard-check text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <span class="font-weight-bold text-white">Mark Attendance</span>
-                            </div>
-                        </a>
-
-                        <!-- Generate Report -->
-                        <a href="{{ route('reports.index') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="icon-circle bg-danger">
-                                    <i class="fas fa-file-pdf text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <span class="font-weight-bold text-white">Generate Report</span>
-                            </div>
-                        </a>
-
+    </div>
+    <div class="col-xl-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-bolt"></i></div>
+                Quick Actions
+            </div>
+            <div style="overflow:hidden;border-radius:0 0 12px 12px;">
+                <a href="{{ route('students.create') }}" class="qa-item">
+                    <div class="qa-ico" style="background:rgba(99,102,241,.1);color:#6366f1;"><i class="fas fa-user-plus"></i></div>
+                    <div>
+                        <div class="qa-lbl">Add New Student</div>
+                        <div class="qa-sub">Register a student</div>
                     </div>
-                </div>
+                </a>
+                <a href="{{ route('admin.requests') }}" class="qa-item">
+                    <div class="qa-ico" style="background:rgba(245,158,11,.1);color:#f59e0b;"><i class="fas fa-inbox"></i></div>
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <div>
+                            <div class="qa-lbl">Profile Requests</div>
+                            <div class="qa-sub">Review pending updates</div>
+                        </div>
+                        @if(isset($pendingProfileCount) && $pendingProfileCount > 0)
+                            <span class="badge bg-danger">{{ $pendingProfileCount }}</span>
+                        @endif
+                    </div>
+                </a>
+                <a href="{{ route('admin.leaves') }}" class="qa-item">
+                    <div class="qa-ico" style="background:rgba(6,182,212,.1);color:#06b6d4;"><i class="fas fa-calendar-check"></i></div>
+                    <div class="d-flex justify-content-between w-100 align-items-center">
+                        <div>
+                            <div class="qa-lbl">Leave Approvals</div>
+                            <div class="qa-sub">Process leave requests</div>
+                        </div>
+                        @if(isset($pendingLeavesCount) && $pendingLeavesCount > 0)
+                            <span class="badge bg-danger">{{ $pendingLeavesCount }}</span>
+                        @endif
+                    </div>
+                </a>
+                <a href="{{ route('attendance.index') }}" class="qa-item">
+                    <div class="qa-ico" style="background:rgba(16,185,129,.1);color:#10b981;"><i class="fas fa-clipboard-check"></i></div>
+                    <div>
+                        <div class="qa-lbl">Mark Attendance</div>
+                        <div class="qa-sub">Take today's attendance</div>
+                    </div>
+                </a>
+                <a href="{{ route('reports.index') }}" class="qa-item">
+                    <div class="qa-ico" style="background:rgba(239,68,68,.1);color:#ef4444;"><i class="fas fa-file-pdf"></i></div>
+                    <div>
+                        <div class="qa-lbl">Generate Report</div>
+                        <div class="qa-sub">Export attendance PDF</div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Active Students Modal (Theme Matched) -->
+<!-- Active Students Modal -->
 <div class="modal fade" id="activeStudentsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-light shadow" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
-            
-            <div class="modal-header border-light">
-                <h5 class="modal-title text-white">
-                    <i class="fas fa-user-check text-info me-2"></i>Active Students List
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-weight:700;font-size:.95rem;">
+                    <i class="fas fa-user-check text-success me-2"></i> Active Students
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            
             <div class="modal-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead style="background: rgba(0,0,0,0.2);">
+                    <table class="table mb-0">
+                        <thead>
                             <tr>
-                                <th class="border-0 text-light opacity-75 ps-3">Sr#</th>
-                                <th class="border-0 text-light opacity-75">Name</th>
-                                <th class="border-0 text-light opacity-75">Roll No</th>
-                                <th class="border-0 text-light opacity-75">Department</th>
-                                <th class="border-0 text-light opacity-75">Semester</th>
-                                <th class="border-0 text-light opacity-75">Session</th>
+                                <th>#</th><th>Name</th><th>Roll No</th>
+                                <th>Department</th><th>Semester</th><th>Session</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($activeStudentsData as $s)
-                            <tr style="border-color: rgba(255,255,255,0.1);">
-                                <td class="ps-3 text-white">{{ $loop->iteration }}</td>
-                                <td class="text-white fw-bold">{{ $s->student_name }}</td>
-                                <td class="text-white">{{ $s->roll_number }}</td>
-                                <td class="text-white">{{ $s->department->name ?? 'N/A' }}</td>
-                                <td>
-                                    <span class="badge bg-info bg-opacity-25 text-info">{{ $s->semester }}</span>
-                                </td>
-                                <td class="text-white opacity-75">{{ $s->session ?? 'N/A' }}</td>
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td style="font-weight:600;">{{ $s->student_name }}</td>
+                                <td><span class="badge bg-primary bg-opacity-10 text-primary">{{ $s->roll_number }}</span></td>
+                                <td>{{ $s->department->name ?? 'N/A' }}</td>
+                                <td><span class="badge bg-info bg-opacity-10 text-info">{{ $s->semester }}</span></td>
+                                <td style="color:#64748b;">{{ $s->session ?? 'N/A' }}</td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-folder-open fa-3x mb-3 opacity-50"></i>
-                                    <h5 class="text-white">No Active Students</h5>
-                                    <p class="text-light opacity-50">No students with attendance records found.</p>
+                                <td colspan="6" class="text-center py-5" style="color:#94a3b8;">
+                                    <i class="fas fa-folder-open fa-2x mb-2 d-block"></i>
+                                    No active students found.
                                 </td>
                             </tr>
                             @endforelse
@@ -245,98 +157,40 @@
                     </table>
                 </div>
             </div>
-            
-            <div class="modal-footer border-light">
-                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
             </div>
-            
         </div>
     </div>
 </div>
+@endsection
 
-<!-- Styles -->
-<style>
-    .hover-card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
-        cursor: pointer;
-    }
-    .hover-card div, .hover-card i {
-        pointer-events: none;
-    }
-
-    /* Quick Actions Styling */
-    #quickActionsList .list-group-item {
-        background-color: transparent;
-        border-color: rgba(255,255,255,0.1);
-        transition: all 0.2s;
-    }
-    #quickActionsList .list-group-item:hover {
-        background-color: rgba(255,255,255,0.1);
-        transform: translateX(5px);
-    }
-
-    /* Icon Circle Styling */
-    .icon-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-    }
-</style>
-
-<!-- Chart Scripts -->
+@section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var options = {
-            series: [{{ $presentCount ?? 0 }}, {{ $absentCount ?? 0 }}, {{ $lateCount ?? 0 }}, {{ $leaveCount ?? 0 }}],
-            chart: {
-                type: 'donut',
-                height: 300,
-                foreColor: '#fff',
-                toolbar: { show: true }
-            },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '65%',
-                        labels: {
-                            show: true,
-                            name: { show: true, fontSize: '16px', color: '#fff' },
-                            value: { show: true, fontSize: '20px', color: '#fff' },
-                            total: {
-                                show: true,
-                                label: 'Total',
-                                color: '#fff',
-                                formatter: function (w) {
-                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            dataLabels: { enabled: true, style: { fontSize: '12px', fontFamily: 'Nunito' } },
-            labels: ['Present', 'Absent', 'Late', 'Leave'],
-            colors: ['#1cc88a', '#e74a3b', '#f6c23e', '#fd7e14'],
-            legend: {
-                position: 'bottom',
-                fontFamily: 'Nunito',
-                fontSize: '14px',
-                labels: { colors: '#ffffff' }
-            }
-        };
-
-        var chart = new ApexCharts(document.querySelector("#attendanceChart"), options);
-        chart.render();
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    var options = {
+        series: [{{ $presentCount ?? 0 }}, {{ $absentCount ?? 0 }}, {{ $lateCount ?? 0 }}, {{ $leaveCount ?? 0 }}],
+        chart: { type: 'donut', height: 300, foreColor: '#6b7280', toolbar: { show: false } },
+        plotOptions: {
+            pie: { donut: { size: '68%', labels: {
+                show: true,
+                name: { show: true, fontSize: '14px', color: '#111827' },
+                value: { show: true, fontSize: '22px', color: '#111827', fontWeight: '800',
+                    fontFamily: 'Outfit, sans-serif' },
+                total: { show: true, label: 'Total Records', color: '#6b7280',
+                    fontFamily: 'Outfit, sans-serif',
+                    formatter: w => w.globals.seriesTotals.reduce((a,b) => a+b, 0) }
+            }}}
+        },
+        dataLabels: { enabled: false },
+        labels: ['Present', 'Absent', 'Late', 'Leave'],
+        colors: ['#10b981', '#ef4444', '#f59e0b', '#fd7e14'],
+        stroke: { width: 0 },
+        legend: { position: 'bottom', fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: '600',
+            markers: { size: 8, shape: 'circle' }, labels: { colors: '#6b7280' } }
+    };
+    new ApexCharts(document.querySelector("#attendanceChart"), options).render();
+});
 </script>
-
 @endsection

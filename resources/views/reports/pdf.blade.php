@@ -4,115 +4,161 @@
     <meta charset="UTF-8">
     <title>Attendance Report</title>
     <style>
-        body { 
-            font-family: 'DejaVu Sans', sans-serif; 
-            font-size: 11px; 
-            margin: 0;
-            padding: 20px;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 11px;
+            color: #1a202c;
+            padding: 24px;
+            background: #fff;
         }
-        
-        /* Header Styling */
+
+        /* HEADER */
         .header {
             text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 3px solid #6366f1;
         }
         .header h1 {
-            margin: 0;
-            color: #2d3748;
             font-size: 20px;
+            font-weight: 900;
+            color: #111827;
+            margin-bottom: 6px;
+            letter-spacing: .02em;
         }
-        .header p {
-            margin: 5px 0 0 0;
-            color: #718096;
-            font-size: 12px;
-        }
-
-        /* Table Styling */
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
+        .meta-row {
+            display: table;
+            width: 100%;
             margin-top: 10px;
         }
-        
-        th, td { 
-            border: 1px solid #e2e8f0; 
-            padding: 8px; 
-            text-align: center; 
+        .meta-item {
+            display: table-cell;
+            text-align: center;
+            padding: 6px 10px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            font-size: 10px;
         }
-        
-        th { 
-            background-color: #2d3748; 
-            color: #ffffff;
-            font-weight: bold;
+        .meta-item strong {
+            display: block;
+            font-size: 11px;
+            color: #111827;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+        .meta-label {
+            color: #9ca3af;
+            font-weight: 600;
             text-transform: uppercase;
-            font-size: 10px;
+            letter-spacing: .06em;
+            font-size: 9px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f7fafc;
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
         }
+        th {
+            background-color: #111827;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: .08em;
+            padding: 9px 8px;
+            text-align: center;
+            border: 1px solid #374151;
+        }
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: center;
+            color: #374151;
+            font-size: 11px;
+        }
+        td.name-col { text-align: left; font-weight: 600; color: #111827; }
+        tr:nth-child(even) td { background-color: #f9fafb; }
+        tr:hover td { background-color: #eef2ff; }
 
-        /* Badge Styling */
+        /* BADGES */
         .badge {
-            padding: 2px 6px;
+            padding: 3px 7px;
             border-radius: 4px;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 10px;
+            display: inline-block;
         }
-        .bg-success { background-color: #48bb78; color: #fff; }
-        .bg-warning { background-color: #FFC107; color: #000; } 
-        .bg-danger { background-color: #f56565; color: #fff; }
-        .bg-orange { background-color: #fd7e14; color: #fff; }
+        .badge-green  { background-color: #d1fae5; color: #065f46; }
+        .badge-red    { background-color: #fee2e2; color: #991b1b; }
+        .badge-yellow { background-color: #fef3c7; color: #92400e; }
+        .badge-orange { background-color: #ffedd5; color: #9a3412; }
+        .pct-good { color: #059669; font-weight: 800; }
+        .pct-bad  { color: #dc2626; font-weight: 800; }
 
-        /* Percentage Text Colors */
-        .text-success { color: #48bb78; font-weight: bold; }
-        .text-danger { color: #f56565; font-weight: bold; }
+        /* SUMMARY ROW */
+        .summary-row td {
+            background: #f0fdf4;
+            font-weight: 700;
+            color: #065f46;
+            border-top: 2px solid #10b981;
+        }
 
-        /* Footer */
+        /* FOOTER */
         .footer {
             margin-top: 20px;
             text-align: center;
-            font-size: 10px;
-            color: #a0aec0;
-            border-top: 1px solid #e2e8f0;
+            font-size: 9px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
             padding-top: 10px;
         }
+        .footer strong { color: #6366f1; }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
+    <!-- Header -->
     <div class="header">
-        <h1>Students Attendance Report</h1>
-        <p>
-            <!-- FIX: $department is already a string name, so use directly -->
-            Department: <b>{{ $department ?? 'N/A' }}</b>
-            
-            <!-- Subject Name Added -->
-            | Subject: <b>{{ $subject->name ?? 'N/A' }}</b>
+        <h1>Student Attendance Report</h1>
 
-            @if($session)
-                | Session: <b>{{ $session }}</b>
-            @endif
-
-            @if($semester)
-                | Semester: <b>{{ $semester }}</b>
-            @endif
-            
-            <br>
-            Duration: <b>{{ $start_date }}</b> to <b>{{ $end_date }}</b>
-        </p>
+        <div class="meta-row">
+            <div class="meta-item">
+                <span class="meta-label">Department</span>
+                <strong>{{ $department ?? 'N/A' }}</strong>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Subject</span>
+                <strong>{{ $subject->name ?? 'N/A' }}</strong>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Semester</span>
+                <strong>{{ $semester ?? 'N/A' }}</strong>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Session</span>
+                <strong>{{ $session ?? 'N/A' }}</strong>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Duration</span>
+                <strong>{{ $start_date }} &mdash; {{ $end_date }}</strong>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Total Students</span>
+                <strong>{{ count($students) }}</strong>
+            </div>
+        </div>
     </div>
 
-    <!-- Table Section -->
+    <!-- Table -->
     <table>
         <thead>
             <tr>
-                <th>Sr#</th>
+                <th>#</th>
                 <th>Roll No</th>
-                <th>Name</th>
+                <th style="text-align:left;">Student Name</th>
                 <th>Total</th>
                 <th>Present</th>
                 <th>Late</th>
@@ -125,28 +171,45 @@
             @foreach($students as $s)
             <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $s->roll_number }}</td>
-                <td style="text-align: left;">{{ $s->student_name }}</td>
+                <td><strong>{{ $s->roll_number }}</strong></td>
+                <td class="name-col">{{ $s->student_name }}</td>
                 <td>{{ $s->total_classes }}</td>
-                <td><span class="badge bg-success">{{ $s->present_count }}</span></td>
-                <td><span class="badge bg-warning">{{ $s->late_count }}</span></td>
-                <td><span class="badge bg-orange">{{ $s->leave_count ?? 0 }}</span></td>
-                <td><span class="badge bg-danger">{{ $s->absent_count }}</span></td>
+                <td><span class="badge badge-green">{{ $s->present_count }}</span></td>
+                <td><span class="badge badge-yellow">{{ $s->late_count }}</span></td>
+                <td><span class="badge badge-orange">{{ $s->leave_count ?? 0 }}</span></td>
+                <td><span class="badge badge-red">{{ $s->absent_count }}</span></td>
                 <td>
                     @if($s->percentage >= 75)
-                        <span class="text-success">{{ $s->percentage }}%</span>
+                        <span class="pct-good">{{ $s->percentage }}%</span>
                     @else
-                        <span class="text-danger">{{ $s->percentage }}%</span>
+                        <span class="pct-bad">{{ $s->percentage }}%</span>
                     @endif
                 </td>
             </tr>
             @endforeach
+
+            @php
+                $totalPresent = collect($students)->sum('present_count');
+                $totalAbsent  = collect($students)->sum('absent_count');
+                $totalLate    = collect($students)->sum('late_count');
+                $totalLeave   = collect($students)->sum('leave_count');
+                $totalClasses = collect($students)->sum('total_classes');
+            @endphp
+            <tr class="summary-row">
+                <td colspan="3" style="text-align:left;font-weight:800;">TOTAL</td>
+                <td>{{ $totalClasses }}</td>
+                <td>{{ $totalPresent }}</td>
+                <td>{{ $totalLate }}</td>
+                <td>{{ $totalLeave }}</td>
+                <td>{{ $totalAbsent }}</td>
+                <td>-</td>
+            </tr>
         </tbody>
     </table>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <div class="footer">
-        Generated on: {{ date('d M Y - h:i A') }}
+        Generated by <strong>AttendTrack</strong> &mdash; {{ date('d M Y, h:i A') }}
     </div>
 
 </body>

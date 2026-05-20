@@ -17,7 +17,7 @@ class AttendanceController extends Controller
         $user = auth()->user();
         
         $departments = Department::all();
-        $semesters = range(1, 8);
+        $semesters = ['1st','2nd','3rd','4th','5th','6th','7th','8th'];
         
         $department_id = request('department_id');
         $semester = request('semester');
@@ -30,14 +30,30 @@ class AttendanceController extends Controller
         $attendanceData = collect();
 
         if ($department_id && $semester && $session) {
-            
-            $cleanSession = str_replace(' ', '', $session);
+
+            // Normalize session: em-dash, en-dash, spaces → regular hyphen
+            $cleanSession = trim($session);
+            $cleanSession = str_replace(["\xe2\x80\x93", "\xe2\x80\x94", "\xc2\xad", ' '], '-', $cleanSession);
+            $cleanSession = preg_replace('/-+/', '-', $cleanSession);
 
             $students = Student::where('department_id', $department_id)
-                               ->where('semester', 'LIKE', $semester . '%') 
-                               ->whereRaw("REPLACE(session, ' ', '') = ?", [$cleanSession])
+                               ->where('semester', $semester)
+                               ->whereRaw("REPLACE(REPLACE(REPLACE(session, '\xe2\x80\x93', '-'), '\xe2\x80\x94', '-'), ' ', '') = ?", [$cleanSession])
                                ->orderBy('roll_number')
                                ->get();
+
+            // Fallback: if still no students, try simple LIKE
+            if ($students->count() === 0) {
+                $yearParts = explode('-', $cleanSession);
+                if (count($yearParts) === 2) {
+                    $students = Student::where('department_id', $department_id)
+                                       ->where('semester', $semester)
+                                       ->where('session', 'LIKE', '%' . trim($yearParts[0]) . '%')
+                                       ->where('session', 'LIKE', '%' . trim($yearParts[1]) . '%')
+                                       ->orderBy('roll_number')
+                                       ->get();
+                }
+            }
 
             if ($subject_id) {
                 $subject = Subject::find($subject_id);
