@@ -1,0 +1,172 @@
+@extends('layouts.app')
+
+@section('content')
+
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:22px;">
+    <div>
+        <h1 style="font-size:1.35rem;font-weight:800;color:#111827;margin-bottom:3px;">Add New Student</h1>
+        <p style="font-size:.82rem;color:#6b7280;margin:0;">Register a new student in the system</p>
+    </div>
+    <a href="{{ route('students.index') }}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-arrow-left me-1"></i> Back
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="card">
+            <div class="card-header">
+                <div class="hico"><i class="fas fa-user-plus"></i></div>
+                Student Information
+            </div>
+            <div class="card-body p-4">
+
+                <form method="POST" action="{{ route('students.store') }}">
+                    @csrf
+                    @if(isset($requestData))
+                        <input type="hidden" name="profile_request_id" value="{{ $requestData->id }}">
+                    @endif
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Student Name</label>
+                            <input type="text" name="name"
+                                   class="form-control"
+                                   style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                   value="{{ old('name') ?? ($requestData->student_name ?? '') }}"
+                                   placeholder="Full Name" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Father Name</label>
+                            <input type="text" name="father_name"
+                                   class="form-control"
+                                   style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                   value="{{ old('father_name') ?? ($requestData->father_name ?? '') }}"
+                                   placeholder="Father's Name" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Roll Number <small class="text-muted">(Used as Login ID)</small></label>
+                            <input type="text" name="roll_number"
+                                   class="form-control"
+                                   style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                   value="{{ old('roll_number') ?? ($requestData->roll_no ?? '') }}"
+                                   placeholder="e.g. 123" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" name="contact_number" maxlength="11"
+                                   class="form-control"
+                                   style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                   value="{{ old('contact_number') ?? ($requestData->contact_number ?? '') }}"
+                                   placeholder="03XXXXXXXXX"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                            <div class="form-text">Format: 03XXXXXXXXX (11 digits)</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="department_id" id="department_id"
+                                    class="form-select"
+                                    style="background:#fff;border:1.5px solid #d1d5db;color:#111827;" required>
+                                <option value="" disabled selected>-- Select Department --</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}"
+                                        {{ (old('department_id') ?? ($requestData->department_id ?? '')) == $dept->id ? 'selected' : '' }}>
+                                        {{ $dept->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Department Code</label>
+                            <input type="text" name="course" id="course"
+                                   class="form-control"
+                                   style="background:#f8fafc;border:1.5px solid #d1d5db;color:#111827;cursor:not-allowed;"
+                                   value="{{ old('course') ?? ($requestData->course ?? '') }}"
+                                   placeholder="Auto-generated" readonly>
+                            <div class="form-text">Automatically generated from department</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Semester</label>
+                            <select name="semester" id="semester"
+                                    class="form-select"
+                                    style="background:#fff;border:1.5px solid #d1d5db;color:#111827;" required>
+                                <option value="" disabled selected>-- Select Semester --</option>
+                                @foreach($semesters as $sem)
+                                    <option value="{{ $sem }}"
+                                        {{ (old('semester') ?? ($requestData->semester ?? '')) == $sem ? 'selected' : '' }}>
+                                        {{ $sem }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Session</label>
+                            <input type="text" name="session"
+                                   class="form-control"
+                                   style="background:#fff;border:1.5px solid #d1d5db;color:#111827;"
+                                   value="{{ old('session', $requestData->session ?? '') }}"
+                                   placeholder="e.g. 2020-2024" required>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <hr style="border-color:#e5e7eb;">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-save me-2"></i> Save Student
+                                </button>
+                                <a href="{{ route('students.index') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@section('scripts')
+<script>
+function generateCourseCode(deptName) {
+    if (!deptName) return '';
+    let name  = deptName.replace(/Department|of|BS|MS/gi, '').trim();
+    let parts = name.split(/\s+/).filter(p => p.length > 0);
+    let prefix = parts.length === 1
+        ? parts[0].substring(0, 3).toUpperCase()
+        : parts.map(p => p.charAt(0)).join('').toUpperCase();
+    let hash = 0;
+    for (let i = 0; i < deptName.length; i++) {
+        hash = ((hash << 5) - hash) + deptName.charCodeAt(i);
+        hash |= 0;
+    }
+    return prefix + '-' + (Math.abs(hash) % 900 + 100);
+}
+
+var deptSelect  = document.getElementById('department_id');
+var courseField = document.getElementById('course');
+
+if (deptSelect && courseField) {
+    deptSelect.addEventListener('change', function() {
+        courseField.value = generateCourseCode(this.options[this.selectedIndex].text);
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!courseField.value && deptSelect.selectedIndex > 0) {
+            courseField.value = generateCourseCode(deptSelect.options[deptSelect.selectedIndex].text);
+        }
+    });
+}
+</script>
+@endsection
