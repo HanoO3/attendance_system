@@ -11,7 +11,7 @@
 
 @if($student)
 
-<!-- Profile Card -->
+
 <div class="card mb-4">
     <div class="card-body p-4">
         <div class="d-flex align-items-center gap-3 mb-3">
@@ -45,7 +45,6 @@
     </div>
 </div>
 
-<!-- Attendance Stats -->
 <div class="row g-3 mb-2">
     <div class="col-xl-3 col-sm-6">
         <a href="{{ route('student.attendance') }}" class="stat-card">
@@ -87,7 +86,6 @@
 
 @else
 
-<!-- Profile Setup Form -->
 <div class="row justify-content-center">
     <div class="col-md-9">
         <div class="card">
